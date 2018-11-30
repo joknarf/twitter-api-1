@@ -26,6 +26,12 @@ class User(db.Model):
     api_key = db.Column(db.String(80))
     tweets = db.relationship('Tweet', back_populates="user")
 
+    def __init__(self):
+        self.is_authenticated = False
+        self.is_anonymous = True
+
+    is_active = True
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -34,5 +40,7 @@ class User(db.Model):
             self.api_key = str(uuid.uuid4())
         return self.api_key
 
+    def get_id(self, api_key):
+        return unicode(self.api_key)
 
 listen(User, 'before_insert', generate_apikey)

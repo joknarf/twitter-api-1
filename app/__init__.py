@@ -34,7 +34,7 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return db.session.query(User).get(user_id)
+        return db.session.query(User).filter_by(api_key=user_id).first()
 
     @app.route('/hello')
     def hello():
