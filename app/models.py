@@ -1,7 +1,11 @@
 from datetime import datetime
 from sqlalchemy.schema import ForeignKey
-
+from sqlalchemy.event import listen
+import uuid
 from app import db
+
+def generate_apikey(mapper, connect, target):
+    target.generate_apikey()
 
 class Tweet(db.Model):
     __tablename__ = "tweets"
@@ -24,3 +28,11 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
+
+    def generate_apikey(self):
+        if not self.api_key:
+            self.api_key = str(uuid.uuid4())
+        return self.api_key
+
+
+listen(User, 'before_insert', generate_apikey)
