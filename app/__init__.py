@@ -16,7 +16,7 @@ def create_app():
         consumer_key='2188276e979471fccaed',
         consumer_secret='ef3a4a718b70989c9715878f6a06e283bac0e7e0',
         request_token_params={'scope': 'user:email'},
-        base_url='http://localhost:5000',
+        base_url='http://localhost:5000/tweets',
         request_token_url=None,
         access_token_method='POST',
         access_token_url='https://github.com/login/oauth/access_token',
@@ -26,6 +26,15 @@ def create_app():
     from config import Config
     app.config.from_object(Config)
     db.init_app(app)
+
+    from flask_login import LoginManager
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return db.session.query(User).get(user_id)
 
     @app.route('/hello')
     def hello():
